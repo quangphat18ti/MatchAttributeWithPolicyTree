@@ -9,8 +9,8 @@ Bài toán được mô tả dựa trên nội dung của [OpenABE API Doc](http
        - Example:  `Date > March 1, 2015`
   4. DATE: `[Prefix] = [Month] [Day], [Year]`
   5. RANGE:   
-    a. Integer range: `[Attribute] in ([int] - int)`.    (Attribute > int1 and Attribute < int2)
-    b. Date Range:    `[Attribute] = [Month] [Day] - [Day], [Year]`  (Attribute >= day1 and Attribute <= day2)
+    a. Integer range: `[Attribute] in ([int] - [int])`.    (Attribute > int1 and Attribute < int2)
+    b. Date Range:    `[Attribute] = [Month] [Day] - [Day], [Year]`  (Attribute >= date1 and Attribute <= date2)
   6. Dấu ngoặc `()`
 
 ### Attribute Lists
