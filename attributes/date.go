@@ -41,6 +41,18 @@ func monthStringToMonth(month string) time.Month{
 	return time.January;
 }
 
+func NewDate(day int, month string, year int) *MyDate{
+	// @TODO: check valid date
+	d := date.New(year, monthStringToMonth(month), day);
+	return &MyDate{
+		day: day,
+		month: month,
+		year: year,
+		d: d,
+	};
+}
+
+// format string: month day, year
 func NewDateFromString(s string) *MyDate{
 	var month string;
 	var day, year int;
@@ -59,6 +71,15 @@ func NewDateFromString(s string) *MyDate{
 	};
 }
 
+// format string: month day1 - day2, year
+func DateRangeFromString(s string) (*MyDate, *MyDate){
+	return nil, nil;
+} 
+
 func (d MyDate) DateToInt() int {
 	return int(d.d.DaysSinceEpoch());
+}
+
+func (d MyDate) ToString() string {
+	return fmt.Sprintf("%s %d, %d", d.month, d.day, d.year);
 }

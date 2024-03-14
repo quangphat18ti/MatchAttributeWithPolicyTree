@@ -4,13 +4,13 @@
 - Policy tree là biểu thức mệnh đề (**boolean formulas**). Bao gồm:   
   1. OR
   2. AND
-  3. Các phép so sánh: `<, >, <=, >=`  
+  3. Các phép so sánh: `<, >, <=, >=, =`,   
     a.  Date Comparison: Chuyển date về thành days since the beginning of unix epoch time (Jan 1, 1970).  
        - Example:  `Date > March 1, 2015`
   4. DATE: `[Prefix] = [Month] [Day], [Year]`
   5. RANGE:   
-    a. Integer range: `[Attribute] in ([int], int)`.  
-    b. Date Range:    `[Attribute] = [Month] [Day] - [Day], [Year]`
+    a. Integer range: `[Attribute] in ([int] - int)`.    (Attribute > int1 and Attribute < int2)
+    b. Date Range:    `[Attribute] = [Month] [Day] - [Day], [Year]`  (Attribute >= day1 and Attribute <= day2)
 
 ### Attribute Lists
 - Được viết cách nhau bởi `|`. 

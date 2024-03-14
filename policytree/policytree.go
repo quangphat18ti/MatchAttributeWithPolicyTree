@@ -4,15 +4,13 @@ import (
 	"example/policytree/attributes"
 	"example/policytree/utils"
 	"fmt"
+	"log"
 	"os"
-	"strings"
 	"unicode/utf8"
 )
 
 var and_characters = []string  {"and", "AND"};
 var or_characters  = []string {"or", "OR"};
-var comparison_characters = []string {"<", ">", "<=", ">=", "="};
-var range_characters = []string {"-", "in"};
 
 type PolicyTree struct{
 	Content string 
@@ -48,15 +46,19 @@ func isOperationString(s string) bool {
 }
 
 func solveConditionString(conditionString string, attribute attributes.Attribute) (bool, bool) {
-	conditionString = strings.TrimSpace(conditionString);
+	conditionObj := NewCondition(conditionString);
+	
+	var val bool;
+	var err error;
+	var isPush bool;
 
-	if conditionString == "" {
-		return false, false;
+	val, err, isPush = conditionObj.SolveConditionString(attribute);
+	if err != nil {
+		log.Fatal(err);
+		os.Exit(1);
 	}
 
-
-
-	return true, true;
+	return val, isPush;
 }
 
 func tryToSolveOperation(operation string, valueStack *utils.Stack) (bool, error) {
@@ -97,8 +99,9 @@ func handleExpression(operationStack *utils.Stack, valueStack *utils.Stack) {
 func solveWithEndWord(operationStack *utils.Stack, valueStack *utils.Stack, buffer string, conditionString string, attributes attributes.Attribute) (string, string) {
 	if isOperationString(buffer) { // it is AND or OR
 		// fmt.Println("\t", buffer, " is an operation")
-		value, ok := solveConditionString(conditionString, attributes);
-		if ok {valueStack.Push(value);}
+		value, isPush := solveConditionString(conditionString, attributes);
+
+		if isPush {valueStack.Push(value);}
 
 		operationStack.Push(buffer);
 
@@ -150,10 +153,10 @@ func (pTree *PolicyTree) EvaluatePolicyTree(attributes attributes.Attribute) boo
 				buffer, conditionString = solveWithEndWord(operationStack, valueStack, buffer, conditionString, attributes);
 				conditionString = solveWithEndCondition(valueStack, conditionString, attributes);
 				
+				handleExpression(operationStack, valueStack);		
+				
 				fmt.Println("\tvalueStack: ", valueStack);
 				fmt.Println("\toperationStack: ", operationStack);
-
-				handleExpression(operationStack, valueStack);		
 			} else if runeValue == ' ' {
 				fmt.Printf("Space, buffer = %s, condition string = %s\n", buffer, conditionString);
 				buffer, conditionString = solveWithEndWord(operationStack, valueStack, buffer, conditionString, attributes);
@@ -165,6 +168,5 @@ func (pTree *PolicyTree) EvaluatePolicyTree(attributes attributes.Attribute) boo
 	}
 	
 	handleExpression(operationStack, valueStack);
-
 	return valueStack.Pop().(bool);
 }

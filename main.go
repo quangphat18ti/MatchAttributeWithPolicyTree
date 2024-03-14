@@ -7,12 +7,12 @@ import (
 )
 
 func main() {
-	attributeLists := "|Manager|IT|Experience=5|Date = December 20, 2015|"
-	policyTreeString := "(Manager AND IT) AND (Experience >= 3 OR Date > March 1, 2010)"
-	
+	attributeLists := "|Manager|IT|Experience=5|Date = March 10, 2010|"
+	policyTreeString := "(Manager AND IT) and (Experience in (1 - 10) and Date = March 11, 2025)"
+
 	attribute := attributes.NewAttributeFromString(attributeLists);
 	fmt.Println(attribute.ToString())
 	
 	policyTree := policytree.NewPolicyTree(policyTreeString);
-	fmt.Println(policyTree.EvaluatePolicyTree(*attribute));
+	fmt.Println("\nMatch PolicyTree with Attribute: ", policyTree.EvaluatePolicyTree(*attribute));
 }
