@@ -6,13 +6,16 @@ import (
 	"fmt"
 )
 
-func main() {
-	attributeLists := "|Manager|IT|Experience=1|Date=March 10,2010|"
-	policyTreeString := "(Manager AND IT) AND (Experience >= 3 or Date = March 2-10,2010)"
+func EvaluatePolicyTree(attributeStr string, policyTreeStr string) bool {
+	attribute := attributes.NewAttributeFromString(attributeStr);
+	policyTree := policytree.NewPolicyTree(policyTreeStr);
+	return policyTree.EvaluatePolicyTree(*attribute);
+}
 
-	attribute := attributes.NewAttributeFromString(attributeLists);
-	fmt.Println(attribute.ToString())
+func main() {
+	attributeLists := "|Date = March 11, 2010|Manager|IT|Experience=10|"
+	policyTreeString := "((Manager) AND IT) and ((Experience <= 10 or Experience > 100) and Date = March 10 -12, 2010)"
 	
-	policyTree := policytree.NewPolicyTree(policyTreeString);
-	fmt.Println("\nMatch PolicyTree with Attribute: ", policyTree.EvaluatePolicyTree(*attribute));
+
+	fmt.Println(EvaluatePolicyTree(attributeLists, policyTreeString));
 }
