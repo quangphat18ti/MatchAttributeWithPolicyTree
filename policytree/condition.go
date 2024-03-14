@@ -70,16 +70,16 @@ func (c *Condition) solveFieldOnly(attr attributes.Attribute) (bool, error) {
 	return attr.ContainsAttribute(c.Content), nil;
 }
 
-func compare(attr attributes.Attribute, fieldStr string, valueStr string, compFunction func(int, int) bool) (bool, error) {
+func compare(attr attributes.Attribute, fieldStr string, valueStr *string, compFunction func(int, int) bool) (bool, error) {
 	fieldStr = strings.TrimSpace(fieldStr);
-	valueStr = strings.TrimSpace(valueStr);
+	*valueStr = strings.TrimSpace((*valueStr));
 
 	fieldValue, isContain := attr.GetAttribute(fieldStr);
 	if !isContain {
 		return false, nil;
 	}
 
-	value, err := attributes.ParseValue(valueStr);
+	value, err := attributes.ParseValue(*valueStr);
 	if err != nil {
 		return false, err;
 	}
@@ -91,23 +91,23 @@ func compare(attr attributes.Attribute, fieldStr string, valueStr string, compFu
 func (c *Condition) solveComperation(attr attributes.Attribute) (bool, error) {
 	if strings.Contains(c.Content, "<=") {
 		splitPatterns := strings.Split(c.Content, "<=");
-		return compare(attr, splitPatterns[0], splitPatterns[1], func(a int, b int) bool {return a <= b;});
+		return compare(attr, splitPatterns[0], &splitPatterns[1], func(a int, b int) bool {return a <= b;});
 	
 	}else if strings.Contains(c.Content, ">=") {
 		splitPatterns := strings.Split(c.Content, ">=");
-		return compare(attr, splitPatterns[0], splitPatterns[1], func(a int, b int) bool {return a >= b;});
+		return compare(attr, splitPatterns[0], &splitPatterns[1], func(a int, b int) bool {return a >= b;});
 	
 	}else if strings.Contains(c.Content, "<") {
 		splitPatterns := strings.Split(c.Content, "<");
-		return compare(attr, splitPatterns[0], splitPatterns[1], func(a int, b int) bool {return a < b;});
+		return compare(attr, splitPatterns[0], &splitPatterns[1], func(a int, b int) bool {return a < b;});
 	
 	}else if strings.Contains(c.Content, ">") {
 		splitPatterns := strings.Split(c.Content, ">");
-		return compare(attr, splitPatterns[0], splitPatterns[1], func(a int, b int) bool {return a > b;});
+		return compare(attr, splitPatterns[0], &splitPatterns[1], func(a int, b int) bool {return a > b;});
 	
 	}else if strings.Contains(c.Content, "=") {
 		splitPatterns := strings.Split(c.Content, "=");
-		return compare(attr, splitPatterns[0], splitPatterns[1], func(a int, b int) bool {return a == b;});
+		return compare(attr, splitPatterns[0], &splitPatterns[1], func(a int, b int) bool {return a == b;});
 	}
 
 	return false, fmt.Errorf("CAN'T MATCH COMPARATION TYPE");
@@ -133,8 +133,8 @@ func (c *Condition) solveNumberRange(attr attributes.Attribute) (bool, error){
 
 	fmt.Printf("attribute %s: %s - %s\n", field, rangeSplits[0], rangeSplits[1]);
 
-	compLeft, err1 := compare(attr, field, rangeSplits[0], func(a int, b int) bool {return a > b;});
-	compRight, err2 := compare(attr, field, rangeSplits[1], func(a int, b int) bool {return a < b;});
+	compLeft, err1 := compare(attr, field, &rangeSplits[0], func(a int, b int) bool {return a > b;});
+	compRight, err2 := compare(attr, field, &rangeSplits[1], func(a int, b int) bool {return a < b;});
 
 	if err1 != nil {
 		return false, err1;
@@ -142,6 +142,12 @@ func (c *Condition) solveNumberRange(attr attributes.Attribute) (bool, error){
 
 	if err2 != nil {
 		return false, err2;
+	}
+
+	// check rangeSplits[0] < rangeSplits[1]
+	val1, _ := attributes.ParseValue(rangeSplits[0]); val2, _ := attributes.ParseValue(rangeSplits[1]);
+	if   val1 > val2  {
+		return false, fmt.Errorf("LEFT VALUE IS BIGGER THAN RIGHT VALUE: %s", c.Content);
 	}
 
 	return compLeft && compRight, nil;
@@ -166,6 +172,10 @@ func (c *Condition) solveDateRange(attr attributes.Attribute) (bool, error) {
 	val1, val2, err := attributes.ParseDateRange(rangeStr);
 	if err != nil {
 		return false, err;
+	}
+
+	if val1 > val2 {
+		return false, fmt.Errorf("LEFT VALUE IS BIGGER THAN RIGHT VALUE, %s", c.Content);
 	}
 
 	fmt.Print("\tField Value: ", val, "\n");

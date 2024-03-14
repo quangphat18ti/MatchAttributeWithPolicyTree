@@ -7,8 +7,8 @@ import (
 )
 
 func main() {
-	attributeLists := "|Manager|IT|Experience=5|Date = March 10, 2010|"
-	policyTreeString := "(Manager AND IT) and (Experience in (1 - 10) and Date = March 11, 2025)"
+	attributeLists := "|Manager|IT|Experience=1|Date=March 10,2010|"
+	policyTreeString := "(Manager AND IT) AND (Experience >= 3 or Date = March 2-10,2010)"
 
 	attribute := attributes.NewAttributeFromString(attributeLists);
 	fmt.Println(attribute.ToString())

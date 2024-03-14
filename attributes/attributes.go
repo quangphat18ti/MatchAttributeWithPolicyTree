@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 )
 
@@ -52,16 +53,35 @@ func ParseDateRange(s string)(int, int, error) {
 
 	s = strings.TrimSpace(s);
 	// TODO: space is not important
-	_, err := fmt.Sscanf(s, "%s %d - %d, %d", &month, &dayLeft, &dayRight, &year);
+	// _, err := fmt.Sscanf(s, "%s %d - %d, %d", &month, &dayLeft, &dayRight, &year);
 
-	if err != nil {
+	// if err != nil {
+	// 	return 0, 0, fmt.Errorf("CAN'T PARSE DATE RANGE, VALUE %s IS NOT FORMATTED CORRECTLY", s);
+	// }
+
+	words := seperateWordsFromString(s);
+	if len(words) != 4 {
+		return 0, 0, fmt.Errorf("CAN'T PARSE DATE RANGE, VALUE %s IS NOT FORMATTED CORRECTLY", s);
+	}
+
+	month = words[0];
+	dayLeft, err := strconv.Atoi(words[1]);
+	if (err != nil) {
+		return 0, 0, fmt.Errorf("CAN'T PARSE DATE RANGE, VALUE %s IS NOT FORMATTED CORRECTLY", s);
+	}
+
+	dayRight, err = strconv.Atoi(words[2]);
+	if (err != nil) {
+		return 0, 0, fmt.Errorf("CAN'T PARSE DATE RANGE, VALUE %s IS NOT FORMATTED CORRECTLY", s);
+	}
+
+	year, err = strconv.Atoi(words[3]);
+	if (err != nil) {
 		return 0, 0, fmt.Errorf("CAN'T PARSE DATE RANGE, VALUE %s IS NOT FORMATTED CORRECTLY", s);
 	}
 
 	date1 := NewDate(dayLeft, month, year);
 	date2 := NewDate(dayRight, month, year);
-
-	fmt.Printf("date1 = %s, date2 = %s\n", date1, date2);
 
 	return date1.DateToInt(), date2.DateToInt(), nil;
 }
