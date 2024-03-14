@@ -1,5 +1,5 @@
 ## Bài toán
-
+Bài toán được mô tả dựa trên nội dung của [OpenABE API Doc](https://github.com/zeutro/openabe/blob/master/docs/libopenabe-v1.0.0-api-doc.pdf) - Mục 2.3 - Trang 13.
 ### Cấu trúc Policy Tree
 - Policy tree là biểu thức mệnh đề (**boolean formulas**). Bao gồm:   
   1. OR
