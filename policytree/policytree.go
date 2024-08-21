@@ -17,8 +17,9 @@ type PolicyTree struct{
 };
 
 func NewPolicyTree(s string) *PolicyTree {
+	var s_extend string = "(" + s + ")";
 	return &PolicyTree{
-		Content: s,
+		Content: s_extend,
 	};
 }
 
@@ -137,7 +138,7 @@ func (pTree *PolicyTree) EvaluatePolicyTree(attributes attributes.Attribute) boo
 	conditionString := "";
 	buffer := "";
 
-	fmt.Println("\nUsing DecodeRuneInString")
+	// fmt.Println("\nUsing DecodeRuneInString")
 	for i, w := 0, 0; i < len(s); i += w {
 			runeValue, width := utf8.DecodeRuneInString(s[i:])
 			w = width
@@ -148,7 +149,7 @@ func (pTree *PolicyTree) EvaluatePolicyTree(attributes attributes.Attribute) boo
 				operationStack.Push('(');
 			
 			} else if runeValue == ')' {
-				fmt.Printf(") at position %d, buffer = %s, conditionString = %s\n", i, buffer, conditionString);
+				fmt.Printf(") at position %d, buffer = %s,conditionString = '%s'\n", i, buffer, conditionString);
 			
 				buffer, conditionString = solveWithEndWord(operationStack, valueStack, buffer, conditionString, attributes);
 				conditionString = solveWithEndCondition(valueStack, conditionString, attributes);
@@ -158,7 +159,7 @@ func (pTree *PolicyTree) EvaluatePolicyTree(attributes attributes.Attribute) boo
 				fmt.Println("\tvalueStack: ", valueStack);
 				fmt.Println("\toperationStack: ", operationStack);
 			} else if runeValue == ' ' {
-				fmt.Printf("Space, buffer = %s, condition string = %s\n", buffer, conditionString);
+				fmt.Printf("Space, buffer = %s, condition string = '%s'\n", buffer, conditionString);
 				buffer, conditionString = solveWithEndWord(operationStack, valueStack, buffer, conditionString, attributes);
 				fmt.Println("\tvalueStack: ", valueStack);
 				fmt.Println("\toperationStack: ", operationStack);
@@ -166,6 +167,7 @@ func (pTree *PolicyTree) EvaluatePolicyTree(attributes attributes.Attribute) boo
 				buffer = buffer + string(runeValue);
 			}
 	}
+	
 	
 	handleExpression(operationStack, valueStack);
 	return valueStack.Pop().(bool);

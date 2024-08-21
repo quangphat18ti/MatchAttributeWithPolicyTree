@@ -90,8 +90,6 @@ func parseAttribute(s string) (string, int) {
 	splitSlice := strings.Split(s, "=");
 	field := splitSlice[0];
 	field = strings.TrimSpace(field);
-	fmt.Println("field = ", field);
-
 	value := 0;
 	if(len(splitSlice) > 1) {
 		valueString := splitSlice[1];
@@ -104,7 +102,7 @@ func parseAttribute(s string) (string, int) {
 		value = val;
 	}
 
-	fmt.Println("value = ", value);
+	fmt.Println("field, value = ", field, value);
 	return field, value;
 }
 
@@ -118,7 +116,7 @@ func NewAttributeFromString(s string) *Attribute{
 		v = strings.TrimSpace(v);
 		if len(v) == 0 {continue;}
 
-		fmt.Println("attribute string = ", v);
+		fmt.Println("attribute phrase = ", v);
 		field, value := parseAttribute(v);
 		list[field] = value;
 		fmt.Println();

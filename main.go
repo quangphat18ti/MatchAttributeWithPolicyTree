@@ -13,8 +13,10 @@ func EvaluatePolicyTree(attributeStr string, policyTreeStr string) bool {
 }
 
 func main() {
-	attributeLists := "|Date = March 11, 2010|Manager|IT|Experience=10|"
-	policyTreeString := "((Manager) AND IT) and ((Experience <= 10 or Experience > 100) and Date = March 10 -12, 2010)"
+	// attributeLists := "|Date = March 11, 2010|Manager|IT|Experience=10|"
+	// policyTreeString := "((Manager) AND IT) and ((Experience <= 10 or Experience > 100) and Date = March 10 -12, 2010)"
+	attributeLists := "|manager =   6|employee"
+	policyTreeString := "(employee and level_5) or manager > 5 or abc = 10"
 	
 
 	fmt.Println(EvaluatePolicyTree(attributeLists, policyTreeString));
